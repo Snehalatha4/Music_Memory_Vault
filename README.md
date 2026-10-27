@@ -84,27 +84,3 @@ The project includes a **smart installer** inside `includes/connect.php`.
 
 ---
 
-## 🎓 Viva / Evaluation Preparation Guide
-Here are the most common questions your external evaluator might ask during the viva, along with simple but impressive answers:
-
-### Q1: "How does Python communicate with PHP in your project?"
-* **Answer:** *"PHP triggers Python using a system call (`exec()` or `popen()`). When a user adds/edits a memory, PHP saves it to MySQL and runs `python python/analytics.py [memory_id]`. Python connects to the database, reads the text, calculates the sentiment score, updates the row, and regenerates Matplotlib charts. When the PHP page loads, it simply renders the newly updated charts and stats from the database."*
-
-### Q2: "Why did you normalize the database? Why not store everything in one single table?"
-* **Answer:** *"Normalization eliminates data redundancy and anomalies. By separating users, songs, artists, albums, and genres into distinct tables, we ensure that if multiple users add memories for the same song 'Perfect' by 'Ed Sheeran', the song details are stored exactly once. We reference them using foreign keys, saving database storage and maintaining consistency."*
-
-### Q3: "What is your database schema and how does the relationships work?"
-* **Answer:** 
-  * `users` has a 1-to-many relationship with `memories`.
-  * `artists` has a 1-to-many relationship with `songs` and `albums`.
-  * `songs` holds foreign keys referencing `artists`, `albums`, and `genres`.
-  * `memories` acts as the junction table connecting `users` and `songs`, holding memory-specific metadata like story, photo, location, rating, and sentiment analysis scores.
-
-### Q4: "How does your Python sentiment analysis work? Do you require internet?"
-* **Answer:** *"It works 100% offline using a customized lexicon analyzer. We compiled lists of highly positive and negative emotional words directly in `analytics.py`. Python splits the story text into individual words, counts matches in both lists, and calculates a normalized score between -1.0 and 1.0. This prevents external API failures during exams while demonstrating natural language processing."*
-
-### Q5: "How are password hashes handled? Is it secure?"
-* **Answer:** *"Yes. We never store plain text passwords. During registration, we hash the password using `password_hash($password, PASSWORD_DEFAULT)` which uses the industry-standard bcrypt algorithm. During login, we verify it using `password_verify()`. This secures user credentials against database leaks."*
-
-### Q6: "How did you implement the Search feature?"
-* **Answer:** *"We have a dual search. On the frontend, `js/search.js` provides instant, client-side filtering on active DOM elements as the user types. On the backend, `search.php` runs a parameterized SQL query with `LIKE` wildcards to find matches in song titles, artist names, locations, and journal text, protecting against SQL Injection."*
